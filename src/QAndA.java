@@ -8,7 +8,7 @@ public class QAndA {
 	private ArrayList<BigInteger> answers;
 	
 	public QAndA() throws Exception {
-		this.p = new Paillier(100);
+		this.p = new Paillier(1024);
 		this.answers = new ArrayList<BigInteger>();
 	}
 

@@ -137,8 +137,8 @@ public class Main {
     // PROJET 
     
     public static void QAndA() throws Exception {
+    	Paillier paillier = new Paillier(1024);
     	ArrayList<String> answers = new ArrayList<String>();
-    	QAndA qa = new QAndA();
     	
     	// List of answers
     	answers.add("solution");
@@ -147,22 +147,18 @@ public class Main {
     	answers.add("secret");
     	answers.add("admin");
     	
-    	ArrayList<BigInteger> mToBigInt = (ArrayList<BigInteger>) answers.stream()
-    					.map(m -> Main.textToBigInteger(m))
-    					.collect(Collectors.toList()); 
-    	
-    	// Choix question
-    	Integer i = 0;
-    	for(BigInteger m : mToBigInt) {
-    		System.out.println(m);
-    		qa.cipher(m);
-    	}
+    	// Set answers
+    	Provider p = new Provider(answers, paillier);
+    	// Choose question n°0
+    	Enquire e = new Enquire(4, paillier);
     	
     	// Decode reponse
-    	ArrayList<BigInteger> ciphers = qa.send(i); // 	enquire
-    	ArrayList<BigInteger> responses = qa.respond(ciphers); // provider
-    	BigInteger clearedAnswer = qa.decryptSecret(responses, i);
-    	System.out.println(bigIntegerToText(clearedAnswer));
+    	ArrayList<BigInteger> ciphers = e.send(p.getCeiling()); // 	enquire
+    	ArrayList<BigInteger> responses = p.respond(ciphers); // provider
+    	BigInteger clearedAnswer = e.decrypt(responses);
+    	
+    	// Retrieve the answer
+    	System.out.println("Response to question " + e.getChosenQuestionNumber() + " is : " + bigIntegerToText(clearedAnswer));
     }
     
     /**
